@@ -33,9 +33,9 @@ for col in range(0,sumpage*8):
         td=threading.Thread(target=download,args=(urlstr,fname))
         td.start()
         threads.append(td)
-    while threading.active_count()>56:
-        for t in threads[:1]:
-            t.join()
+    while true:
+        if threading.active_count()<56:
+            break
 for t in threads:
     t.join()
 size=1
@@ -50,9 +50,9 @@ for p in range(0,sumpage):
     td=threading.Thread(target=hc,args=(p,))
     td.start()
     threads.append(td)
-    while threading.active_count()>20:
-        for t in threads[:1]:
-            t.join()
+    while true:
+        if threading.active_count()<20:
+            break
 for t in threads:
     t.join()
 print "start:"+startime,"end:"+time.strftime("%H:%M:%S")
