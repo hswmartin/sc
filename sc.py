@@ -33,7 +33,7 @@ for col in range(0,sumpage*8):
         td=threading.Thread(target=download,args=(urlstr,fname))
         td.start()
         threads.append(td)
-    while true:
+    while True:
         if threading.active_count()<56:
             break
 for t in threads:
@@ -50,7 +50,7 @@ for p in range(0,sumpage):
     td=threading.Thread(target=hc,args=(p,))
     td.start()
     threads.append(td)
-    while true:
+    while True:
         if threading.active_count()<20:
             break
 for t in threads:
