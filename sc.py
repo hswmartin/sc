@@ -1,20 +1,23 @@
 #---coding:utf-8---
 from PIL import Image,ImageFile
+from fpdf import FPDF
 import os,sys,time
 import threading
+bookname=sys.argv[1]
 startime=time.strftime("%H:%M:%S")
 threads=[]
-sumpage=64
-front="http://211.79.206.2:8080/ocp/include/viewBookXmml.php?no=180116035516356&viewType=0&version=69/br"
+mw = 221
+mw = 234
+mh = 312
+sumpage=100
+front="http://211.79.206.2:8080/ocp/include/viewBookXmml.php?no=180201074458987&viewType=0&version=146/br"
 os.system("rm /root/undone/*")
 os.system("rm /root/zazhi/*")
 os.system("rm /root/zazhi/done/*")
 def download(urlstr,fname):
     os.system('aria2c --max-tries=0 --retry-wait=3 --save-session=/root/undone/'+fname+'.session -s 1 -j 1 -x 1 -c -d /root/zazhi -o '+fname+' --user-agent "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36 Name" "'+urlstr+'"')
 def hc(p):
-    mw = 221
-    mw = 234
-    mh = 312
+    global mw,mh
     toImage = Image.new('RGB', (mw * 8, mh * 8))
     try:
         for x in range(p*8, (p+1)*8):
@@ -55,4 +58,12 @@ for p in range(0,sumpage):
             break
 for t in threads:
     t.join()
+pdf = FPDF(unit = "pt", format = [mw*8, mh*8])
+for page in range(0,sumpage) :
+    file=os.path.join('/root/zazhi/done/',str(page)+'.jpg')
+    pdf.add_page()
+    pdf.image(file,0,0)
+pdf.output("/root/"+bookname+".pdf", "F")
+os.system("gdrive upload -p 0BxiMW05er8ZBUUdOX2dnWTRnOTA /root/"+bookname+".pdf")
+os.system("rm /root/"+bookname+".pdf")
 print "start:"+startime,"end:"+time.strftime("%H:%M:%S")
