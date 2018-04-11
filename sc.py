@@ -3,14 +3,15 @@ from PIL import Image,ImageFile
 from fpdf import FPDF
 import os,sys,time
 import threading
-bookname=sys.argv[1]
+bookname=raw_input("书名：")
 startime=time.strftime("%H:%M:%S")
 threads=[]
 mw = 221
-mw = 234
+mw = raw_input("短边长：[default:234]") or "234"
+mw = int(mw)
 mh = 312
-sumpage=100
-front="http://211.79.206.2:8080/ocp/include/viewBookXmml.php?no=180201074458987&viewType=0&version=146/br"
+sumpage= input("页数：")
+front= raw_input("地址：")
 os.system("rm /root/undone/*")
 os.system("rm /root/zazhi/*")
 os.system("rm /root/zazhi/done/*")
@@ -31,13 +32,13 @@ def hc(p):
 for col in range(0,sumpage*8):
     for row in range(0,8):
 #        print threading.active_count()
-        urlstr=front+str(row).zfill(5)+str(col).zfill(5)+'00003'
+        urlstr=front[0:-15]+str(row).zfill(5)+str(col).zfill(5)+'00003'
         fname=str(row)+str(col).zfill(5)
         td=threading.Thread(target=download,args=(urlstr,fname))
         td.start()
         threads.append(td)
     while True:
-        if threading.active_count()<56:
+        if threading.active_count()<100:
             break
 for t in threads:
     t.join()
@@ -47,7 +48,7 @@ while size:
   lr=os.listdir("/root/undone")
   size=len(lr)
   for file in lr:
-    os.system("rm -f /root/zazhi/"+file)
+    os.system("rm -f /root/zazhi/"+file.split(".")[0])
     os.system("aria2c --save-session=/root/undone/"+file+" -i /root/undone/"+file)
 for p in range(0,sumpage):
     td=threading.Thread(target=hc,args=(p,))
